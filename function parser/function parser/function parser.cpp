@@ -57,9 +57,24 @@ double eVAL(string pexpr)
                     cout << "kkterr" << endl;
                     exit(-1);
                 }
-                val1=eVAL(part1);
-                val2=eVAL(part2);
+				val1=eVAL(part1);
+				val2=eVAL(part2);
 
+				// store the operator
+				/*if(pos != -1)
+				{
+					cout << "operator: " << op <<" leftpart: " << part1 << " rigth part: " << part2 << endl;
+				}
+
+				cout << "eval left >>>>" << endl;
+				val1=eVAL(part1);
+				cout << "eval left returned: " << val1 << endl;
+				
+				cout << "eval rigth >>>" << endl;
+                val2=eVAL(part2);
+				cout << "eval rigth returned: " << val2 << endl;
+*/
+			
                 switch(i)
                 {
                     case 0: return val1-val2; break;
@@ -186,6 +201,10 @@ int find_operator(string pexpr, string opr)
 	open_pos=pexpr.find('(');
 	
 	opr_pos=pexpr.rfind(opr);
+
+	if(open_pos==-1 && closed_pos==-1)
+		return opr_pos;
+	
 	if(opr_pos>closed_pos && (closed_pos!=-1))
         return opr_pos;
 
@@ -193,7 +212,5 @@ int find_operator(string pexpr, string opr)
 	if(opr_pos<open_pos && (open_pos!=-1))
 		return opr_pos;
 
-	if(open_pos==-1 && closed_pos==-1)
-		return opr_pos;
     return -1;
 }
