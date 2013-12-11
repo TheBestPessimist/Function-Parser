@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <math.h>
+#include <vector>
 
 using namespace std;
 
@@ -15,6 +16,8 @@ bool isOperator(string, string, int);
 int find_operator(string, string);
 
 const string  basic_operations="-+/*^";
+vector<string> functions = vector<string>();
+
 int _tmain(int argc, _TCHAR* argv[])
 {
     string inputexpr;
@@ -22,8 +25,15 @@ int _tmain(int argc, _TCHAR* argv[])
     cin >> inputexpr;
     while(inputexpr != "exit")
     {
-        cout << eVAL(inputexpr) << endl;
-        cin >> inputexpr;
+        cout << endl << eVAL(inputexpr) << endl;
+		
+		cout << "vector: " << endl;
+		for(int i = 0; i < functions.size(); ++i)
+			cout << functions[i];
+		functions.clear();
+		cout << endl << endl;
+
+		cin >> inputexpr;
     }
 
     system("pause");
@@ -40,7 +50,7 @@ double eVAL(string pexpr)
 {
     int pos;
     string part1, part2, op, func;
-    double val1, val2;
+    double val1, val2, val3 = 0;
 
     for(int i=0; i<5; i++)
     {
@@ -57,16 +67,15 @@ double eVAL(string pexpr)
                     cout << "kkterr" << endl;
                     exit(-1);
                 }
-				val1=eVAL(part1);
-				val2=eVAL(part2);
 
 				// store the operator
-				/*if(pos != -1)
-				{
-					cout << "operator: " << op <<" leftpart: " << part1 << " rigth part: " << part2 << endl;
-				}
-
-				cout << "eval left >>>>" << endl;
+				//cout << "operator: " << op <<" leftpart: " << part1 << " rigth part: " << part2 << endl;
+				cout << op << " ";
+				functions.push_back(op);
+				val1=eVAL(part1);
+				val2=eVAL(part2);
+				
+				/*cout << "eval left >>>>" << endl;
 				val1=eVAL(part1);
 				cout << "eval left returned: " << val1 << endl;
 				
@@ -89,19 +98,23 @@ double eVAL(string pexpr)
                     case 4: return pow(val1, val2); break;
                 }
             }
+
             if(pos > 0) 
                 pos=pexpr.rfind(op, pos-1);
             else if(pos == 0)
                 pos = -1;
         }
     }
+
     pos=pexpr.find("(");
     if(pos!=-1 && pexpr[pexpr.length()-1]==')')
     {
         func=pexpr.substr(0,pos);
         part2=pexpr.substr(pos+1, pexpr.length()-2-pos);
+		cout << func << " ";
+		functions.push_back(func);
         val2=eVAL(part2);
-        
+
         if(func=="sqrt" || func=="-sqrt")return sqrt((double)val2)*pow((double)-1,(double)(func=="-sqrt"));
 
         else if(func=="abs" || func=="-abs")return abs((double)val2)*pow((double)-1,(double)(func=="-abs"));
@@ -134,25 +147,28 @@ double eVAL(string pexpr)
 
         else if(func=="tanh" || func=="-tanh")return tanh((double)val2)*pow((double)-1,(double)(func=="-tanh"));
  
-        
         else return val2;
-
-
-        // else {cout << "kkterr" << endl;exit(-1);}
-
     }
+
     if(isValue(pexpr))
     {
         stringstream ss;
         ss << pexpr;
-        double val3;
         ss >> val3;
-        return val3;
     } 
     if(pexpr=="pi")
-        return 3.14;
+        val3 = 3.14;
     else if(pexpr=="e")
-        return 2.71;
+        val3 = 2.71;
+
+	cout << val3 << " ";
+	stringstream ss;
+    string aux;
+	ss << val3;
+	ss >> aux;
+	functions.push_back(aux);
+
+	return val3;
 }
 bool isOperator(string expr, string sop, int n)
 {
@@ -195,22 +211,22 @@ bool isValue(string str)
  */
 int find_operator(string pexpr, string opr)
 {
-    int opr_pos, open_pos, closed_pos;
-    
-    closed_pos=pexpr.rfind(')');
-	open_pos=pexpr.find('(');
-	
-	opr_pos=pexpr.rfind(opr);
+    int opr_pos, bopen, bclosed;
+    string sign;
 
-	if(open_pos==-1 && closed_pos==-1)
-		return opr_pos;
-	
-	if(opr_pos>closed_pos && (closed_pos!=-1))
-        return opr_pos;
+	opr_pos = pexpr.length()-1;
+	bopen = bclosed = 0;
 
-	opr_pos=pexpr.find(opr);
-	if(opr_pos<open_pos && (open_pos!=-1))
-		return opr_pos;
-
-    return -1;
+	while(opr_pos >= 0)
+	{
+		sign = pexpr[opr_pos];
+		if(sign==opr && bopen==bclosed)
+			return opr_pos;
+		if(sign=="(")
+			++bopen;
+		if(sign==")")
+			++bclosed;
+		--opr_pos;
+	}
+	return -1;
 }
