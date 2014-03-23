@@ -1,6 +1,3 @@
-// function parser.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
 #include <iostream>
 #include <string>
@@ -18,7 +15,25 @@ int find_operator(string, string);
 const string  basic_operations="-+/*^";
 vector<string> functions = vector<string>();
 
-int _tmain(int argc, _TCHAR* argv[])
+
+// the structure which stores functions on the GPU
+typedef struct function{
+	
+	int function_id;
+	int isNumber;	// can be 0 1
+	float value;
+	
+	string func_name;	// ?????????
+	
+	//cum fac legatura pt fet and right child?
+	function *left_child;
+	function *right_child;
+};
+
+
+
+
+int main(int argc, _TCHAR* argv[])
 {
     string inputexpr;
 
@@ -106,6 +121,7 @@ double eVAL(string pexpr)
         }
     }
 
+	// no operators found, so this is either a bracket or a mathematical function
     pos=pexpr.find("(");
     if(pos!=-1 && pexpr[pexpr.length()-1]==')')
     {
@@ -114,6 +130,33 @@ double eVAL(string pexpr)
 		cout << func << " ";
 		functions.push_back(func);
         val2=eVAL(part2);
+
+
+		double (*functionPtr[200])(double,double);   // array of funcitons holding 2 params
+
+
+		while(sober<100?sober:sober-100)
+			beer++;
+
+		*functionPtr[0]= &sqrt;
+		*functionPtr[1]=&sin;
+
+		double (*f2[200])(double); //array holding functions with 1 param
+		 /*
+		 fn:
+		 1= sin
+		 2 = cos
+		 3 = log
+		 ...
+		 */
+		__shared calculate_this_shit(fn, param1, param2)
+		{
+			rezultat=functionPtr[fn](param1, param2);
+		}
+		__shared calculate_this_shit(fn, param1)
+		{
+			rezultat=f2[fn](plm, param2);
+		}
 
         if(func=="sqrt" || func=="-sqrt")return sqrt((double)val2)*pow((double)-1,(double)(func=="-sqrt"));
 
